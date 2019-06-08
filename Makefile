@@ -6,22 +6,33 @@ PORT := 8082
 FLASK_ENV := production
 FLASK_APP := myapp.py
 CONTAINER := flask-$(USER)
+IMAGE_EXISTS=$(shell docker images -q flask-testing/flask-base:$(VERSION))
 
 build:
 	# Check if image is built
-	docker build -t flask-testing/flask-base:$(VERSION) .
-
+	if [[ "$(IMAGE_EXISTS)" == "" ]]; then \
+		docker build -t flask-testing/flask-base:$(VERSION) .; \
+	else \
+		echo Image is available locally.; \
+	fi
 
 run-container: build
 	# Check for container running
-	docker run -d -t --name=$(CONTAINER) -p $(PORT):5000 \
-		-e "LOGDIRECTORY=$(LOGDIRECTORY)" -e "FLASK_APP=$(FLASK_APP)" \
-		-e "FLASK_ENV=$(FLASK_ENV)" -e "LC_ALL=C.UTF-8" -e "LANG=C.UTF-8" \
-		--workdir=$(PWD) --volume $(PWD):$(PWD) \
-		flask-testing/flask-base:$(VERSION)
+	if  [[ $(shell docker ps | grep $(CONTAINER)| wc -l) == 0 ]]; then \
+		docker run -d -t --name=$(CONTAINER) -p $(PORT):5000 \
+			-e "LOGDIRECTORY=$(LOGDIRECTORY)" -e "FLASK_APP=$(FLASK_APP)" \
+			-e "FLASK_ENV=$(FLASK_ENV)" -e "LC_ALL=C.UTF-8" -e "LANG=C.UTF-8" \
+			--workdir=$(PWD) --volume $(PWD):$(PWD) \
+			flask-testing/flask-base:$(VERSION); \
+	else \
+		echo $(CONTAINER) is already running; \
+	fi
 
 run-app: run-container
 	docker exec -t $(CONTAINER) flask run --host 0.0.0.0 --reload &
+
+stop-container:
+	docker rm -f $(CONTAINER)
 
 stop-app:
 	# Check if container is running
