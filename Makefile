@@ -25,7 +25,7 @@ run-container: build
 			--workdir=$(PWD) --volume $(PWD):$(PWD) \
 			flask-testing/flask-base:$(VERSION); \
 	else \
-		echo $(CONTAINER) is already running; \
+		echo Container $(CONTAINER) is already running; \
 	fi
 
 run-app: run-container
