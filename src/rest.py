@@ -35,9 +35,10 @@ def add():
     title = 'Add Bench info'
     form = BenchForm()
     if request.method == 'POST':
+        print(form.name, form.name.__dict__)
         name = form.name.data
         bench_type = form.bench_type.data
-        db.local_cur(f"INSERT into bench values('BENCH{name:0>2d}', '{bench_type}')")
+        db.local_cur(f"INSERT into bench (name, bench_type) values('BENCH{name:0>2d}', '{bench_type}')")
         return query()
     return render_template('form.html', title=title, form=form)
 

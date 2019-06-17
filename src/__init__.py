@@ -20,10 +20,11 @@ class local_db():
         Creates a local in memory sqlite3 database.
         Entries are not persistent.
         """
-        self.con = sqlite3.connect(":memory:", check_same_thread=False)
+        self.con = sqlite3.connect("my_app.db", check_same_thread=False)
+        #self.con = sqlite3.connect(":memory:", check_same_thread=False)
         self.con.row_factory = dict_factory
         self.cur = self.con.cursor()
-        self.cur.execute("CREATE TABLE bench(name text, type text)")
+        #self.cur.execute("CREATE TABLE bench(name text, bench_type text, eth1 text)")
         self.con.commit()
 
     def __del__(self):
