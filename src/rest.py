@@ -5,7 +5,7 @@ import csv
 from flask_wtf import FlaskForm
 from flask_bootstrap import Bootstrap
 from wtforms import IntegerField, StringField, SubmitField
-from flask import Flask, request, render_template, jsonify
+from flask import Flask, request, render_template, jsonify, make_response
 from flask_table import Table, Col
 from . import local_db
 
