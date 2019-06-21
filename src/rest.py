@@ -20,8 +20,14 @@ class BenchForm(FlaskForm):
     submit = SubmitField('Submit')
 
 @app.route('/')
-def hello_world():
-    return 'Hello World!'
+def index():
+    title = 'Flask Quickstart 3.0'
+    links = [('/query', 'api_bench', 'Query Bench Information and return json'),
+             ('/add', 'Add Bench', 'Add entry form for bench info'),
+             ('/populate', 'Populate sometable', 'Populates a dbtable with data'),
+             ('/table1', 'Table 1', 'Returns a formatted table with some of the data'),
+             ('/table2', 'Table 2', 'Returns a formatted table with all the data')]
+    return render_template('index.html', title=title, links=links)
 
 @app.route('/query')
 def query(name='bench'):
@@ -63,4 +69,3 @@ def test():
     test_file = os.getenv('TEST_FILES' or '')
     pytest.main(['-vvs', './tests/' + test_file,
                  '--junit-xml=/tmp/results/app_test_results.xml'])
-
