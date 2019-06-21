@@ -21,10 +21,25 @@ class local_db():
         Entries are not persistent.
         """
         self.con = sqlite3.connect("my_app.db", check_same_thread=False)
+        # Example of in memory sqlite db
         #self.con = sqlite3.connect(":memory:", check_same_thread=False)
         self.con.row_factory = dict_factory
         self.cur = self.con.cursor()
-        #self.cur.execute("CREATE TABLE bench(name text, bench_type text, eth1 text)")
+        self.create_table()
+
+    def create_table(self, name=None, columns=None):
+        """
+        Creates a database table if it does not already exist
+
+        :param name: Name of the table
+        :param columns: String of column names and type
+            E.g. 'name text, column2 int'
+
+        """
+        table_name = name or 'bench'
+        columns = columns or 'name text, bench_type text, eth1 text'
+        cmd = f"CREATE TABLE IF NOT EXISTS {table_name}({columns})"
+        self.cur.execute(cmd)
         self.con.commit()
 
     def __del__(self):
