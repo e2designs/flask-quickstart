@@ -9,6 +9,7 @@ from flask import Flask, request, render_template, jsonify
 from flask_table import Table, Col
 from . import local_db
 
+HTML_ATTRS = {'table border': '1'}
 bootstrap = Bootstrap()
 
 app = Flask(__name__)
@@ -85,7 +86,7 @@ def table1():
     data = db.local_cur('select * from sometable')
     if request.method == 'POST':
         return download_csv(response, filename='table1')
-    table = Table1(data)
+    table = Table1(data, html_attrs=HTML_ATTRS)
     return render_template('table.html', title='Table1 with selective data',
                            table=table)
 
@@ -95,7 +96,7 @@ def table2():
     data = db.local_cur('select * from sometable')
     if request.method == 'POST':
         return download_csv(response, filename='table2')
-    table = Table2(data)
+    table = Table2(data, html_attrs=HTML_ATTRS)
     return render_template('table.html', title='Table2 with selective data',
                            table=table)
 
@@ -105,7 +106,7 @@ def table_error():
     data = db.local_cur('select * from sometable')
     if request.method == 'POST':
         return download_csv(response, filename='table3')
-    table = Table3(data)
+    table = Table3(data, html_attrs=HTML_ATTRS)
     return render_template('table.html', title='Table3 with selective data',
                            table=table)
 
