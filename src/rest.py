@@ -24,8 +24,8 @@ def hello_world():
     return 'Hello World!'
 
 @app.route('/query')
-def query():
-    query = 'SELECT * from bench'
+def query(name='bench'):
+    query = f"SELECT * from {name}"
     response = db.local_cur(query)
     return jsonify(response)
 
@@ -41,6 +41,20 @@ def add():
         db.local_cur(f"INSERT into bench (name, bench_type) values('BENCH{name:0>2d}', '{bench_type}')")
         return query()
     return render_template('form.html', title=title, form=form)
+
+@app.route('/populate')
+def populate():
+    """ Adds a table with data_"""
+    name = "sometable"
+    columns = ("id INTEGER PRIMARY KEY AUTOINCREMENT, "
+               "column1 text, "
+               "column2 int, "
+               "column3 text")
+    db.create_table(name=name, columns=columns)
+    for i in range(1, 10):
+        data = f"'datapoint{i}', {i}, 'other{i}'"
+        db.local_cur(f"INSERT into {name} (column1, column2, column3) values({data})")
+    return query(name=name)
 
 @app.cli.command()
 def test():
