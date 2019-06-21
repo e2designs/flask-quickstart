@@ -1,5 +1,7 @@
 import os
 import sqlite3
+from io import StringIO
+import csv
 from flask_wtf import FlaskForm
 from flask_bootstrap import Bootstrap
 from wtforms import IntegerField, StringField, SubmitField
@@ -26,7 +28,9 @@ def index():
              ('/add', 'Add Bench', 'Add entry form for bench info'),
              ('/populate', 'Populate sometable', 'Populates a dbtable with data'),
              ('/table1', 'Table 1', 'Returns a formatted table with some of the data'),
-             ('/table2', 'Table 2', 'Returns a formatted table with all the data')]
+             ('/table2', 'Table 2', 'Returns a formatted table with all the data'),
+             ('/table_error', 'Table Error',
+              'Attempts to render table when expected data is not present')]
     return render_template('index.html', title=title, links=links)
 
 @app.route('/query')
@@ -62,6 +66,36 @@ def populate():
         db.local_cur(f"INSERT into {name} (column1, column2, column3) values({data})")
     return query(name=name)
 
+@app.route('/table1', methods=['GET', 'POST'])
+def table1():
+    """ Table output using table template 1"""
+    data = db.local_cur('select * from sometable')
+    if request.method == 'POST':
+        return download_csv(response, filename='table1')
+    table = Table1(data)
+    return render_template('table.html', title='Table1 with selective data',
+                           table=table)
+
+@app.route('/table2', methods=['GET', 'POST'])
+def table1():
+    """ Table output using table template 2"""
+    data = db.local_cur('select * from sometable')
+    if request.method == 'POST':
+        return download_csv(response, filename='table2')
+    table = Table2(data)
+    return render_template('table.html', title='Table2 with selective data',
+                           table=table)
+
+@app.route('/table_error', methods=['GET', 'POST'])
+def table_error():
+    """ Table output using table template 3"
+    data = db.local_cur('select * from sometable')
+    if request.method == 'POST':
+        return download_csv(response, filename='table3')
+    table = Table3(data)
+    return render_template('table.html', title='Table3 with selective data',
+                           table=table)
+
 @app.cli.command()
 def test():
     """Executes tests for this application"""
@@ -69,3 +103,21 @@ def test():
     test_file = os.getenv('TEST_FILES' or '')
     pytest.main(['-vvs', './tests/' + test_file,
                  '--junit-xml=/tmp/results/app_test_results.xml'])
+
+def download_csv(csvList, filename):
+    """
+    Download csv function
+    :param csvList: List of dictionary data
+    :param filename: filename prefix to use.
+    :returns: Content response with csv file, causes the browser to download the
+              csv.
+    """
+    keys = csvList[0].keys()
+    si = StringIO()
+    cw = csv.DictWriter(si, keys)
+    cw.writeheader()
+    cw.writerows(csvList)
+    response = make_response(si.getvalue())
+    response.headers['Content-Disposition'] = 'attachment; filename={}.csv'.format(filename)
+    response.headers["Content-type"] = "text/csv"
+    return response
