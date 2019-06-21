@@ -6,6 +6,7 @@ from flask_wtf import FlaskForm
 from flask_bootstrap import Bootstrap
 from wtforms import IntegerField, StringField, SubmitField
 from flask import Flask, request, render_template, jsonify
+from flask_table import Table, Col
 from . import local_db
 
 bootstrap = Bootstrap()
@@ -20,6 +21,18 @@ class BenchForm(FlaskForm):
     name = IntegerField('Enter Bench number')
     bench_type = StringField('Enter Bench type')
     submit = SubmitField('Submit')
+
+class Table1(Table):
+    column1 = Col('Column 1')
+    column3 = Col('Column 3')
+
+class Table2(Table):
+    column1 = Col('Value 1')
+    column2 = Col('Value 2')
+    column3 = Col('Value 3')
+
+class Table3(Table):
+    column4 = Col('Error')
 
 @app.route('/')
 def index():
@@ -88,7 +101,7 @@ def table1():
 
 @app.route('/table_error', methods=['GET', 'POST'])
 def table_error():
-    """ Table output using table template 3"
+    """ Table output using table template 3"""
     data = db.local_cur('select * from sometable')
     if request.method == 'POST':
         return download_csv(response, filename='table3')
