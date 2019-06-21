@@ -90,7 +90,7 @@ def table1():
                            table=table)
 
 @app.route('/table2', methods=['GET', 'POST'])
-def table1():
+def table2():
     """ Table output using table template 2"""
     data = db.local_cur('select * from sometable')
     if request.method == 'POST':
