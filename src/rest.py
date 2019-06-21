@@ -85,7 +85,7 @@ def table1():
     """ Table output using table template 1"""
     data = db.local_cur('select * from sometable')
     if request.method == 'POST':
-        return download_csv(response, filename='table1')
+        return download_csv(data, filename='table1')
     table = Table1(data, html_attrs=HTML_ATTRS)
     return render_template('table.html', title='Table1 with selective data',
                            table=table)
@@ -95,7 +95,7 @@ def table2():
     """ Table output using table template 2"""
     data = db.local_cur('select * from sometable')
     if request.method == 'POST':
-        return download_csv(response, filename='table2')
+        return download_csv(data, filename='table2')
     table = Table2(data, html_attrs=HTML_ATTRS)
     return render_template('table.html', title='Table2 with selective data',
                            table=table)
@@ -105,7 +105,7 @@ def table_error():
     """ Table output using table template 3"""
     data = db.local_cur('select * from sometable')
     if request.method == 'POST':
-        return download_csv(response, filename='table3')
+        return download_csv(data, filename='table3')
     table = Table3(data, html_attrs=HTML_ATTRS)
     return render_template('table.html', title='Table3 with selective data',
                            table=table)
