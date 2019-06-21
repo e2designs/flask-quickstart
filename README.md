@@ -7,3 +7,10 @@ Tags:
   - 2.0 - In memory sqlite3 database with query and entry form.
   - 2.1 - Local sqlite3 database file with added database column.
         - Column is not in the form and not in the insert statement.
+  - 3.0 TABLES!
+        - New db table.
+        - New method to populate db.
+        - Table output showing some of the returned query data
+        - Table output showing all returned data
+        - Table error when expected data is not present.
+        - CSV download button.
