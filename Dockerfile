@@ -13,6 +13,7 @@ RUN apt-get install -y libpq-dev
 
 RUN apt-get clean
 
+RUN pip3 install sqlite3
 RUN pip3 install Flask
 RUN pip3 install Flask-Table
 RUN pip3 install Flask-Bootstrap
