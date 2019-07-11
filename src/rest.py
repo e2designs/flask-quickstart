@@ -2,9 +2,9 @@ import os
 import sqlite3
 from io import StringIO
 import csv
-from flask_wtf import FlaskForm
+import re
 from flask_bootstrap import Bootstrap
-from wtforms import IntegerField, StringField, SubmitField
+from wtforms import IntegerField, StringField, SubmitField, SelectField
 from flask import Flask, request, render_template, jsonify, make_response
 from flask_table import Table, Col
 from . import local_db
@@ -17,11 +17,26 @@ app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY') or os.urandom(32)
 bootstrap.init_app(app)
 db = local_db()
 
-class BenchForm(FlaskForm):
-    """Defines bench entry form"""
-    name = IntegerField('Enter Bench number')
-    bench_type = StringField('Enter Bench type')
-    submit = SubmitField('Submit')
+def query_bench():
+    """ Returns a tuple of bench number and name"""
+    query = "SELECT name from bench"
+    response = db.local_cur(query)
+    values = []
+    number = re.compile(r'BENCH(\d+)')
+    for bench in response:
+        try:
+            match = number.search(bench)
+            num = match[1]
+        except:
+            num = 'NULL'
+        values.append((num, bench))
+    return values
+
+class DynamicForm(FlaskForm):
+    """Defines a dynamic dropdown"""
+    #benches = query_bench()
+    bench = SelectField('bench', choices=[('01', 'BENCH01'), ('05', 'BENCH05')])
+    bench_type = SelectField('Type', choices=[])
 
 class Table1(Table):
     column1 = Col('Column 1')
@@ -39,6 +54,7 @@ class Table3(Table):
 def index():
     title = 'Flask Quickstart 3.0'
     links = [('/query', 'api_bench', 'Query Bench Information and return json'),
+             ('/dynamic', 'Dynamic Form', 'Example flask form with javascript'),
              ('/add', 'Add Bench', 'Add entry form for bench info'),
              ('/populate', 'Populate sometable', 'Populates a dbtable with data'),
              ('/table1', 'Table 1', 'Returns a formatted table with some of the data'),
@@ -46,6 +62,15 @@ def index():
              ('/table_error', 'Table Error',
               'Attempts to render table when expected data is not present')]
     return render_template('index.html', title=title, links=links)
+
+
+@app.route('/dynamic')
+def dynamic():
+    title = 'Dynamic Form'
+    form = DynamicForm()
+    query = f"SELECT name, bench_type from bench where name = 'BENCH01'"
+    form.bench_type.choices = [(bench_type.id, bench_type.name) for bench in (db.local_cur(query))]
+    return render_template('dynamic.html', title=title, form=form)
 
 @app.route('/query')
 def query(name='bench'):
@@ -63,7 +88,6 @@ def add():
         name = form.name.data
         bench_type = form.bench_type.data
         db.local_cur(f"INSERT into bench (name, bench_type) values('BENCH{name:0>2d}', '{bench_type}')")
-        return query()
     return render_template('form.html', title=title, form=form)
 
 @app.route('/populate')
