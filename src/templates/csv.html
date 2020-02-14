@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}IQC Query Tool{% endblock %}
+{% block page_content %}
+<div class="page-header">
+    <h1> {{ title }} </h1>
+</div>
+
+<body>
+    <form method="POST" enctype="multipart/form-data">
+        {{ form.table }}
+        {{ form.csvfile }}
+        <input type="submit">
+    </form>
+</body>
+{% endblock %}
