@@ -1,3 +1,5 @@
+# WIP - Currently a dumping ground for a bunch of stuff.
+
 # Generic framework for flask applications.
 Used as a training tool.
 

@@ -1,0 +1,4 @@
+﻿id,testid,tester,build,config,result,defect,notes,str_notes,duration,defect_title,created_at,updated_at
+1,test_1,tester1,4.2.1001,A,PASS,N/A,Something,None,0,N/A,,
+2,test_2,tester2,4.2.1002,B,FAIL,D-12345,Nothing,High priority,12,Something went wrong,,
+3,test_3,tester3,4.2.1003,C,PASS,N/A,Everything,All Good,56,,,

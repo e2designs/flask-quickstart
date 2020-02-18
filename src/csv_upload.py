@@ -73,26 +73,30 @@ def index():
             for row in
             csv.DictReader(file_data.splitlines(), skipinitialspace=True)]
         table = form.table.data
+        # TODO: Need to find an agreed upon method for validating entries.
+        # Options are:
+        #   1. New python function
+        #   2. Cerberus
+        #   3. marshmallow
+        #   4. SQLAlchemy
+        #   5. Postgresql foreign key and value constraints.
         col_names = (get_db_columns(table=table))
-        errors = validate_columns(mydict, col_names)
-        valid = f"Valid Columns:{col_names}"
-        if errors:
-            return render_template('422.html', error=errors, valid=valid)
+        error = validate_columns(mydict, table, col_names)
+        if error:
+            return render_template('422.html', error=error, valid=col_names)
 
         return jsonify(mydict)
     return render_template('csv.html', title=title, form=form)
 
-def validate_columns(data, colnames):
-    errors = []
-    num = 1
-    for entry in data:
-        for key in entry.keys():
-            if key not in colnames:
-                errormsg = (f"ERROR - Entry:{num} Column:{key} is not a valid column for the "
-                            f"selected table")
-                errors.append(errormsg)
-        num += 1
-    return errors
+def validate_columns(data, table, colnames):
+    invalid_entries = []
+    for key in data[0].keys():
+        if key not in colnames:
+            invalid_entries.append(key)
+    if invalid_entries:
+        errormsg = (f"ERROR - Columns: {invalid_entries} are not a valid for the selected table "
+                    f"{table}")
+        return errormsg
 
 
 def get_db_columns(table):

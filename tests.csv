@@ -1,0 +1,4 @@
+﻿testid,matlvl,reqid,testmodule,author,reviewer,testtype,coverage,testarea,testdesc,userid,t_case,sme,assigned,targetsystem,automator,comments,created_at,updated_at
+test_one,1,PLAT-1234,test_module_one,author1,reviewer1,Normal,N/A,ANY,Test Something one,User1,PLAT-2345,User2,User3,ANY,User4,N/A,,
+test_two,2,PLAT-1235,test_module_two,author2,reviewer2,Normal,N/A,ANY,Test Something Two,User2,PLAT-2346,User3,User4,ANY,User5,N/A,,
+test_three,3,PLAT-1236,test_module_three,author3,reviewer3,Robustness,N/A,4G,Test Something Three,User3,PLAT-2347,User4,User5,ANY,User6,N/A,,
