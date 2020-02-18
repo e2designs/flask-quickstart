@@ -6,3 +6,6 @@ __pycache__
 *.log
 *.tgz
 *.bak
+.DS_Store
+.idea
+venv
