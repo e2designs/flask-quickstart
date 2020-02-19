@@ -21,11 +21,17 @@ class Tests(db.Model):
 
 class Results(db.Model):
     __tablename__ = "results"
+    __table_args__ = (
+        db.CheckConstraint("defect ~ '^D-\d{5}$|^N/A$'", name='valid_defect'),
+        db.CheckConstraint("(not result ~ 'FAIL|BLOCKED') or (defect ~ '^D-\d{5}$')",
+                           name="defect_id_if_fail")
+    )
     id = db.Column(db.Integer, primary_key=True)
     testid = db.Column(db.String(64), db.ForeignKey('tests.testid'))
     result = db.Column(db.String(64), db.ForeignKey('result_keys.id'))
     tester = db.Column(db.String(64), db.ForeignKey('testers.id'))
     build = db.Column(db.String(64), db.ForeignKey('build.build'))
+    defect = db.Column(db.String(64), server_default='N/A')
     db.relationship('Tests', backref="testid", lazy=True, uselist=False)
     db.relationship('Testers', backref="tester", lazy=True, uselist=False)
     db.relationship('Build', backref="build", lazy=True, uselist=False)
